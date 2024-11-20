@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node deploy-bot.js",
-    "dev": "nodemon deploy-bot.js",
+    "dev": "node src/deploy-bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "bonniekang",
