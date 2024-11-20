@@ -1,0 +1,26 @@
+{
+  "name": "deploy-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot for triggering Vercel deployments",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node deploy-bot.js",
+    "dev": "nodemon deploy-bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bonniekang",
+  "license": "ISC",
+  "keywords": [
+    "discord",
+    "bot",
+    "vercel",
+    "deployment"
+  ],
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
