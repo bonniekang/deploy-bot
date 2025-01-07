@@ -104,7 +104,7 @@ client.on("messageCreate", async (message) => {
       message.reply("Triggering revalidation...");
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/revalidate-path?pageId=${pageId}`,
+          `${API_BASE_URL}/api/revalidate-page?pageId=${pageId}`,
           { method: "GET" }
         );
 
