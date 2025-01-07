@@ -17,6 +17,9 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 // Vercel deployment webhook URL
 const VERCEL_WEBHOOK_URL = process.env.VERCEL_WEBHOOK_URL;
 
+// API base URL for revalidation
+const API_BASE_URL = process.env.API_BASE_URL;
+
 process.on("unhandledRejection", (error) => {
   console.error("Unhandled promise rejection:", error);
 });
