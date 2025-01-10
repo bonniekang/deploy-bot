@@ -83,59 +83,109 @@ client.on("messageCreate", async (message) => {
     const args = message.content.split(" ");
     if (args.length < 2) {
       message.reply(
-        "Usage: revalidate <pageId>. Please provide the pageId to revalidate."
+        "Usage: revalidate <option>. Please provide the pageId or 'all' to revalidate."
       );
       return;
     }
 
-    const pageId = args[1];
+    const option = args[1];
 
-    message.reply(
-      `Are you sure you want to revalidate the page with ID: ${pageId}? Reply with "yes" to confirm.`
-    );
+    if (option.toLowerCase() === "all") {
+      message.reply(
+        `Are you sure you want to revalidate all blog posts? Reply with "yes" to confirm.`
+      );
 
-    // Wait for user's confirmation
-    const filter = (response) =>
-      response.content.toLowerCase() === "yes" &&
-      response.author.id === message.author.id;
-    const collector = message.channel.createMessageCollector({
-      filter,
-      time: 15000,
-    });
+      // Wait for user's confirmation
+      const filter = (response) =>
+        response.content.toLowerCase() === "yes" &&
+        response.author.id === message.author.id;
+      const collector = message.channel.createMessageCollector({
+        filter,
+        time: 15000,
+      });
 
-    collector.on("collect", async () => {
-      message.reply("Triggering revalidation...");
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/revalidate-page?pageId=${pageId}`,
-          { method: "GET" }
-        );
-
-        if (response.ok) {
-          const result = await response.json();
-          message.channel.send(
-            `Revalidation triggered successfully for path: ${result.path}`
+      collector.on("collect", async () => {
+        message.reply("Triggering revalidation for all blog posts...");
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/revalidate-list`, // API endpoint to revalidate the list
+            { method: "GET" }
           );
-        } else {
-          const error = await response.json();
+
+          if (response.ok) {
+            const result = await response.json();
+            message.channel.send(
+              `Revalidation triggered successfully for the entire blog post list.`
+            );
+          } else {
+            const error = await response.json();
+            message.channel.send(
+              `Failed to revalidate the blog post list. Server responded with status: ${response.status}. Error: ${error.message}`
+            );
+          }
+        } catch (error) {
           message.channel.send(
-            `Failed to revalidate path. Server responded with status: ${response.status}. Error: ${error.message}`
+            "Failed to trigger revalidation for all blog posts. Please check the API endpoint."
           );
+          console.error("Error triggering revalidation:", error);
         }
-      } catch (error) {
-        message.channel.send(
-          "Failed to trigger revalidation. Please check the API endpoint."
-        );
-        console.error("Error triggering revalidation:", error);
-      }
-      collector.stop();
-    });
+        collector.stop();
+      });
 
-    collector.on("end", (collected) => {
-      if (collected.size === 0) {
-        message.reply("Revalidation cancelled due to no confirmation.");
-      }
-    });
+      collector.on("end", (collected) => {
+        if (collected.size === 0) {
+          message.reply("Revalidation cancelled due to no confirmation.");
+        }
+      });
+    } else {
+      const pageId = option;
+      message.reply(
+        `Are you sure you want to revalidate the page with ID: ${pageId}? Reply with "yes" to confirm.`
+      );
+
+      // Wait for user's confirmation
+      const filter = (response) =>
+        response.content.toLowerCase() === "yes" &&
+        response.author.id === message.author.id;
+      const collector = message.channel.createMessageCollector({
+        filter,
+        time: 15000,
+      });
+
+      collector.on("collect", async () => {
+        message.reply("Triggering revalidation...");
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/revalidate-page?pageId=${pageId}`,
+            { method: "GET" }
+          );
+
+          if (response.ok) {
+            const result = await response.json();
+            message.channel.send(
+              `Revalidation triggered successfully for path: ${result.path}`
+            );
+          } else {
+            const error = await response.json();
+            message.channel.send(
+              `Failed to revalidate path. Server responded with status: ${response.status}. Error: ${error.message}`
+            );
+          }
+        } catch (error) {
+          message.channel.send(
+            "Failed to trigger revalidation. Please check the API endpoint."
+          );
+          console.error("Error triggering revalidation:", error);
+        }
+        collector.stop();
+      });
+
+      collector.on("end", (collected) => {
+        if (collected.size === 0) {
+          message.reply("Revalidation cancelled due to no confirmation.");
+        }
+      });
+    }
   }
 });
 
