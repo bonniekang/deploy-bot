@@ -109,7 +109,7 @@ client.on("messageCreate", async (message) => {
         try {
           const response = await fetch(
             `${API_BASE_URL}/api/revalidate-list`, // API endpoint to revalidate the list
-            { method: "GET" }
+            { method: "POST" }
           );
 
           if (response.ok) {
@@ -155,10 +155,11 @@ client.on("messageCreate", async (message) => {
       collector.on("collect", async () => {
         message.reply("Triggering revalidation...");
         try {
-          const response = await fetch(
-            `${API_BASE_URL}/api/revalidate-page?pageId=${pageId}`,
-            { method: "GET" }
-          );
+          const response = await fetch(`${API_BASE_URL}/api/revalidate-page`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pageId }),
+          });
 
           if (response.ok) {
             const result = await response.json();
